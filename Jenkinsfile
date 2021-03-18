@@ -4,7 +4,7 @@ node('master') {
     ]) {
 
         stage('Print environment variables') {
-            echo '${env}'
+            sh 'echo $env.BRANCH_NAME'
         }
 
         
