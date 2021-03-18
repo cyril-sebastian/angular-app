@@ -1,15 +1,21 @@
-node {
+node('master') {
     withEnv([
         'branch=${params.branch}'
     ]) {
-        stage('Checkout') {
-            checkout([
-                $class: 'GitSCM', 
-                branches: [[name: '${params.branch}']], 
-                extensions: [], 
-                userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-            ])
+
+        stage('Print environment variables') {
+            echo '${env}'
         }
+
+        
+        // stage('Checkout') {
+        //     checkout([
+        //         $class: 'GitSCM', 
+        //         branches: [[name: $env.branch]], 
+        //         extensions: [], 
+        //         userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
+        //     ])
+        // }
         docker.image('node:14-alpine').inside {
             // stage('Checkout') {
             //     checkout([
