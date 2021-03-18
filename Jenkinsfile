@@ -4,15 +4,8 @@ node('master') {
     ]) {
 
         stage('Print environment variables') {
-            steps {
-                step {
-                    sh 'echo $branch'
-                }
-                step {
-                    sh 'echo $env'
-                }
-            }
-            
+            echo "$branch"
+            echo "$env"
         }
 
         
