@@ -5,7 +5,7 @@ node {
         stage('Checkout') {
             checkout([
                 $class: 'GitSCM', 
-                branches: [[name: $branch]], 
+                branches: [[name: '${params.branch}']], 
                 extensions: [], 
                 userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
             ])
