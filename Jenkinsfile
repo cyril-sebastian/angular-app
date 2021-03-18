@@ -2,15 +2,23 @@ node {
     withEnv([
         'branch=${params.branch}'
     ]) {
+        stage('Checkout') {
+            checkout([
+                $class: 'GitSCM', 
+                branches: [[name: $branch]], 
+                extensions: [], 
+                userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
+            ])
+        }
         docker.image('node:14-alpine').inside {
-            stage('Checkout') {
-                checkout([
-                    $class: 'GitSCM', 
-                    branches: [[name: $branch]], 
-                    extensions: [], 
-                    userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-                ])
-            }
+            // stage('Checkout') {
+            //     checkout([
+            //         $class: 'GitSCM', 
+            //         branches: [[name: $branch]], 
+            //         extensions: [], 
+            //         userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
+            //     ])
+            // }
 
             stage('Greeting') {
                 echo 'Hello! how are you'
