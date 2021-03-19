@@ -27,7 +27,21 @@ node('master') {
             }
 
             stage('Test') {
-                sh 'ng tests --watch=false'
+                sh 'npm test -- --no-watch --code-coverage'
+            }
+
+            stage('Example') {
+                input {
+                    message "Should we continue?"
+                    ok "Yes, we should."
+                    submitter "alice,bob"
+                    parameters {
+                        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+                    }
+                }
+                steps {
+                    echo "Hello, ${PERSON}, nice to meet you."
+                }
             }
         }
     }
