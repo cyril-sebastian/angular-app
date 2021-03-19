@@ -1,17 +1,9 @@
 node('master') {
     skipDefaultCheckout()
-    
+
     withEnv([
         'name=cyril'
     ]) {
-
-        // stage('Print environment variables') {
-        //     echo "$name"
-        //     echo "$params.branch"
-        //     def branch_name = env.BRANCH_NAME
-        //     echo "$branch_name"
-        //     echo "$env.BRANCH_NAME"
-        // }
 
         docker.image('node:14-alpine').inside {
             stage('Checkout') {
@@ -28,18 +20,14 @@ node('master') {
             }
 
             stage('Build') {
-                steps {
-                    sh 'node --version'
-                    sh 'npm --version'
-                    sh 'cd angular-app'
-                    sh 'npm install'
-                }
+                sh 'node --version'
+                sh 'npm --version'
+                sh 'cd angular-app'
+                sh 'npm install'
             }
 
             stage('Test') {
-                steps {
-                    sh 'ng tests --watch=false'
-                }
+                sh 'ng tests --watch=false'
             }
         }
     }
