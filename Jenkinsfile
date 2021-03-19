@@ -6,8 +6,9 @@ node('master') {
     ]) {
 
         docker.image('node:14-alpine').inside {
+            def repo
             stage('Checkout') {
-                checkout([
+                repo = checkout([
                     $class: 'GitSCM', 
                     branches: [[name: params.branch]], 
                     extensions: [], 
@@ -16,7 +17,7 @@ node('master') {
             }
 
             stage('Greeting') {
-                echo "Hello! how are you $BRANCH_NAME"
+                echo "Hello! how are you"
             }
 
             stage('Build') {
