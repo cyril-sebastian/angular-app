@@ -26,9 +26,9 @@ node('master') {
                 sh 'npm install'
             }
 
-            stage('Test') {
-                sh 'npm test -- --no-watch --code-coverage'
-            }
+            // stage('Test') {
+            //     sh 'npm test -- --no-watch --code-coverage'
+            // }
 
             stage('Example') {
                 input {
