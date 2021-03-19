@@ -23,8 +23,6 @@ node('master') {
             stage('Build') {
                 sh 'node --version'
                 sh 'npm --version'
-                sh 'ls'
-                sh 'cd angular-app'
                 sh 'npm install'
             }
 
