@@ -1,10 +1,11 @@
 node('master') {
     withEnv([
-        'branch=${params.branch}'
+        'name=cyril'
     ]) {
 
         stage('Print environment variables') {
-            echo "$branch"
+            echo "$name"
+            echo "$params.branch"
             echo "$env"
         }
 
