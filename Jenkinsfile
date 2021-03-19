@@ -32,22 +32,28 @@ node('master') {
         }
     }
 }
-
 // Kill Agent
+
 // Input Step
 timeout(time: 15, unit: "MINUTES") {
     stage('Input example') {
-        input {
-            message "Should we continue?"
-            ok "y"
-            submitter "alice,bob"
-            parameters {
-                string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION')
-            }
-        }
-        steps {
-            echo "Hello, ${PERSON}, nice to meet you."
-        }
+        // input(message: "Should we continue?", ok: "y", submitter: "alice,bob", )
+        //     parameters {
+        //         string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+        //         choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION')
+        //     }
+        // }
+        input(
+            id: 'Action',
+            message: 'Should we continue?', 
+            ok: 'y', 
+            parameters: [
+                choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION'), 
+                string(defaultValue: 'alice', description: '', name: 'PERSON', trim: false)
+            ],
+            submitter: 'alice,bob'
+        )
+        echo "Hello, $PERSON, nice to meet you."
+        echo "$ACTION"
     }
 }
