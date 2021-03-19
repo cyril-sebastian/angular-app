@@ -6,7 +6,9 @@ node('master') {
         stage('Print environment variables') {
             echo "$name"
             echo "$params.branch"
-            echo "$BRANCH_NAME"
+            def branch_name = env.BRANCH_NAME
+            echo "$branch_name"
+            echo "$env.BRANCH_NAME"
         }
 
         
