@@ -36,7 +36,7 @@ node('master') {
 // Kill Agent
 // Input Step
 timeout(time: 15, unit: "MINUTES") {
-    stage('Example') {
+    stage('Input example') {
         input {
             message "Should we continue?"
             ok "y"
