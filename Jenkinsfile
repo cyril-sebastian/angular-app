@@ -16,12 +16,13 @@ node('master') {
             }
 
             stage('Greeting') {
-                echo 'Hello! how are you'
+                echo "Hello! how are you $BRANCH_NAME"
             }
 
             stage('Build') {
                 sh 'node --version'
                 sh 'npm --version'
+                sh 'ls'
                 sh 'cd angular-app'
                 sh 'npm install'
             }
