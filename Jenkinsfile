@@ -29,22 +29,25 @@ node('master') {
             // stage('Test') {
             //     sh 'npm test -- --no-watch --code-coverage'
             // }
-
-            stage('Example') {
-                input {
-                    message "Should we continue?"
-                    ok "Yes, we should."
-                    submitter "alice,bob"
-                    parameters {
-                        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-                    }
-                }
-                steps {
-                    echo "Hello, ${PERSON}, nice to meet you."
-                }
-            }
         }
     }
-    
+}
 
+// Kill Agent
+// Input Step
+timeout(time: 15, unit: "MINUTES") {
+    stage('Example') {
+        input {
+            message "Should we continue?"
+            ok "y"
+            submitter "alice,bob"
+            parameters {
+                string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+                choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION')
+            }
+        }
+        steps {
+            echo "Hello, ${PERSON}, nice to meet you."
+        }
+    }
 }
