@@ -3,32 +3,23 @@ node('master') {
         'name=cyril'
     ]) {
 
-        stage('Print environment variables') {
-            echo "$name"
-            echo "$params.branch"
-            def branch_name = env.BRANCH_NAME
-            echo "$branch_name"
-            echo "$env.BRANCH_NAME"
-        }
-
-        
-        // stage('Checkout') {
-        //     checkout([
-        //         $class: 'GitSCM', 
-        //         branches: [[name: $env.branch]], 
-        //         extensions: [], 
-        //         userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-        //     ])
+        // stage('Print environment variables') {
+        //     echo "$name"
+        //     echo "$params.branch"
+        //     def branch_name = env.BRANCH_NAME
+        //     echo "$branch_name"
+        //     echo "$env.BRANCH_NAME"
         // }
+
         docker.image('node:14-alpine').inside {
-            // stage('Checkout') {
-            //     checkout([
-            //         $class: 'GitSCM', 
-            //         branches: [[name: $branch]], 
-            //         extensions: [], 
-            //         userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-            //     ])
-            // }
+            stage('Checkout') {
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: params.branch]], 
+                    extensions: [], 
+                    userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
+                ])
+            }
 
             stage('Greeting') {
                 echo 'Hello! how are you'
