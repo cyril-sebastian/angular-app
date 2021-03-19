@@ -89,22 +89,3 @@ node('master') {
         }
     }
 }
-// Kill Agent
-
-// Input Step
-timeout(time: 15, unit: "MINUTES") {
-    stage('Input example') {
-        input(
-            id: 'Action',
-            message: 'Should we continue?', 
-            ok: 'yes', 
-            parameters: [
-                choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION'), 
-                string(defaultValue: 'alice', description: '', name: 'PERSON', trim: false)
-            ],
-            submitter: 'alice,bob'
-        )
-        echo "Hello, $PERSON, nice to meet you."
-        echo "$ACTION"
-    }
-}
