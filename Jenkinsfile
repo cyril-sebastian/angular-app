@@ -1,4 +1,6 @@
 node('master') {
+    skipDefaultCheckout()
+    
     withEnv([
         'name=cyril'
     ]) {
