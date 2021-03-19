@@ -6,7 +6,7 @@ node('master') {
         stage('Print environment variables') {
             echo "$name"
             echo "$params.branch"
-            echo "$env"
+            echo "$env.BRANCH_NAME"
         }
 
         
