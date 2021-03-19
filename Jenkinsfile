@@ -74,7 +74,7 @@ node('master') {
             }
 
             stage('Greeting') {
-                echo "Hello! how are you $CHANGE_ID"
+                echo "Hello! how are you $BRANCH_NAME"
             }
 
             stage('Build') {
