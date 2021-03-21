@@ -63,7 +63,8 @@ node('master') {
     }
 
     // docker.image('node:14-alpine').inside {
-    docker.image('rastasheep/alpine-node-chromium').inside {
+    // docker.image('rastasheep/alpine-node-chromium').inside {
+    docker.image('trion/ng-cli-karma').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
             sh 'node --version'
