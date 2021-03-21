@@ -62,17 +62,17 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    docker.image('node:14-alpine').inside {
+    // docker.image('node:14-alpine').inside {
+    docker.image('rastasheep/alpine-node-chromium').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
-            pwd()
-            sh 'ls'
+            sh 'node --version'
+            sh 'npm --version'
         }
 
         stage('Build') {
-            sh 'node --version'
-            sh 'npm --version'
             sh 'npm install'
+            sh 'npm build'
         }
 
         stage('Test') {
