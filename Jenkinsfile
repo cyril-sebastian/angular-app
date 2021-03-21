@@ -79,15 +79,10 @@ node('master') {
         // }
     }
 
-    stage('Ping') {
-        sh 'ping sonarqube'
-    }    
-
-    // stage('SonarQube') {
-    //     def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
-
-    //     withSonarQubeEnv('sonarqube-server') {
-    //         sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app"
-    //     }
-    // }
+    stage('SonarQube') {
+        def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+        withSonarQubeEnv('sonarqube-server') {
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app"
+        }
+    }
 }
