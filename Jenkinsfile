@@ -81,6 +81,7 @@ node('master') {
 
     stage('SonarQube') {
         def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+        
         withSonarQubeEnv('sonarqube-server') {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app"
         }
