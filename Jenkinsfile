@@ -62,8 +62,7 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    // docker.image('node:14-alpine').inside {
-    docker.image('trion/ng-cli-karma').inside {
+    docker.image('node:14-alpine').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
             pwd('.')
@@ -76,9 +75,9 @@ node('master') {
             sh 'npm install'
         }
 
-        // stage('Test') {
-        //     sh 'npm test -- --no-watch --code-coverage'
-        // }
+        stage('Test') {
+            sh 'npm test -- --no-watch --code-coverage'
+        }
 
         stage('SonarQube') {
             def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
