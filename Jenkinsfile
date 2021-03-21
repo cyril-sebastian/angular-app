@@ -65,7 +65,8 @@ node('master') {
     docker.image('node:14-alpine').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
-            sh 'pwd ls'
+            sh 'pwd'
+            sh 'ls'
         }
 
         stage('Build') {
