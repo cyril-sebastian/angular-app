@@ -62,8 +62,6 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    // docker.image('node:14-alpine').inside {
-    // docker.image('rastasheep/alpine-node-chromium').inside {
     docker.image('trion/ng-cli-karma').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
@@ -79,13 +77,12 @@ node('master') {
         stage('Test') {
             sh 'npm test -- --no-watch --code-coverage'
         }
+    }
 
-        stage('SonarQube') {
-            def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
-            withSonarQubeEnv('sonarqube-server') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app"
-            }
+    stage('SonarQube') {
+        def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+        withSonarQubeEnv('sonarqube-server') {
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app"
         }
-
     }
 }
