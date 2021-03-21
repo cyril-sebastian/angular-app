@@ -57,35 +57,33 @@
 node('master') {
     skipDefaultCheckout()
 
-    withEnv([
-        'name=cyril'
-    ]) {
+    stage('Checkout') {
+        checkout scm
+        sh "$WORKSPACE"
+    }
 
-        docker.image('node:14-alpine').inside {
-            def repo
-            stage('Checkout') {
-                checkout scm
-                // repo = checkout([
-                //     $class: 'GitSCM', 
-                //     branches: [[name: env.BRANCH_NAME]], 
-                //     extensions: [], 
-                //     userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-                // ])
-            }
-
-            stage('Greeting') {
-                echo "Hello! how are you $BRANCH_NAME"
-            }
-
-            stage('Build') {
-                sh 'node --version'
-                sh 'npm --version'
-                sh 'npm install'
-            }
-
-            // stage('Test') {
-            //     sh 'npm test -- --no-watch --code-coverage'
-            // }
+    docker.image('node:14-alpine').inside {
+        stage('Greeting') {
+            echo "Hello! how are you $BRANCH_NAME"
+            sh 'pwd ls'
         }
+
+        stage('Build') {
+            sh 'node --version'
+            sh 'npm --version'
+            sh 'npm install'
+        }
+
+        // stage('Test') {
+        //     sh 'npm test -- --no-watch --code-coverage'
+        // }
+
+        stage('SonarQube') {
+            def scannerHome = tool(name: 'sonarqube-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+            withSonarQubeEnv('sonarqube-server') {
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app"
+            }
+        }
+
     }
 }
