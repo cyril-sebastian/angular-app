@@ -62,10 +62,11 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    docker.image('node:14-alpine').inside {
+    // docker.image('node:14-alpine').inside {
+    docker.image('trion/ng-cli-karma').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
-            pwd()
+            pwd('.')
             sh 'ls'
         }
 
