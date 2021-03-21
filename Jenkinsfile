@@ -59,13 +59,13 @@ node('master') {
 
     stage('Checkout') {
         checkout scm
-        sh "$WORKSPACE"
+        echo "$WORKSPACE"
     }
 
     docker.image('node:14-alpine').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
-            sh 'pwd'
+            pwd
             sh 'ls'
         }
 
