@@ -62,45 +62,45 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    stage('Greeting') {
-        nodejs('nodejs-15.11.0') {
-            echo "Hello! how are you $BRANCH_NAME"
-            sh 'node --version'
-            sh 'npm --version'
-        }
-    }
-
-    stage('Build') {
-        nodejs('nodejs-15.11.0') {
-            sh 'npm install'
-            sh 'npm build'
-        }
-    }
-
-    stage('Test') {
-        nodejs('nodejs-15.11.0') {
-            sh 'npm test -- --no-watch --code-coverage'
-            // sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
-        }
-    }
-
-    // docker.image('trion/ng-cli-karma').inside {
-    //     stage('Greeting') {
+    // stage('Greeting') {
+    //     nodejs('nodejs-15.11.0') {
     //         echo "Hello! how are you $BRANCH_NAME"
     //         sh 'node --version'
     //         sh 'npm --version'
     //     }
+    // }
 
-    //     stage('Build') {
+    // stage('Build') {
+    //     nodejs('nodejs-15.11.0') {
     //         sh 'npm install'
     //         sh 'npm build'
     //     }
+    // }
 
-    //     stage('Test') {
+    // stage('Test') {
+    //     nodejs('nodejs-15.11.0') {
     //         sh 'npm test -- --no-watch --code-coverage'
     //         // sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
     //     }
     // }
+
+    docker.image('trion/ng-cli-karma').inside {
+        stage('Greeting') {
+            echo "Hello! how are you $BRANCH_NAME"
+            sh 'node --version'
+            sh 'npm --version'
+        }
+
+        stage('Build') {
+            sh 'npm install'
+            sh 'npm build'
+        }
+
+        stage('Test') {
+            sh 'npm test -- --no-watch --code-coverage'
+            // sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+        }
+    }
 
     stage('SonarQube') {
         def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
