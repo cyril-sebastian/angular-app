@@ -92,6 +92,8 @@ node('master') {
     }
 
     stage('Record Coverage') {
+        def val = changeRequest();
+        echo "$val"
         if(changeRequest()) {
             currentBuild.result = 'SUCCESS';
             step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
