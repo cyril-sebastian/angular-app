@@ -64,7 +64,7 @@ node('master') {
 
     docker.image('trion/ng-cli-karma').inside {
         stage('Greeting') {
-            echo "Hello! how are you $BRANCH_NAME"
+            echo "Hello! how are you $BRANCH_NAME  $CHANGE_TARGET  $CHANGE_BRANCH"
             sh 'node --version'
             sh 'npm --version'
         }
@@ -74,9 +74,34 @@ node('master') {
             sh 'npm build'
         }
 
-        // stage('Test') {
-        //     sh 'npm test -- --no-watch --code-coverage'
-        // }
+        stage('Test') {
+            sh 'npm test -- --no-watch --code-coverage'
+        }
+
+        stage('Record Coverage') {
+            when { changeRequest() }
+            steps {
+                script {
+                    currentBuild.result = 'SUCCESS'
+                }
+                step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]])
+            }
+        }
+
+        stage('PR Coverage to Github') {
+            when { 
+                allOf {
+                    not { branch pattern: "{main}", comparator: "GLOB" };
+                    expression { return env.CHANGE_ID != null }
+                } 
+            }
+            steps {
+                script {
+                    currentBuild.result = 'SUCCESS'
+                }
+                step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL]])
+            }
+        }
     }
 
     stage('SonarQube') {
