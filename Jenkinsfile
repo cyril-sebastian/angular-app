@@ -84,7 +84,8 @@ node('master') {
     //     }
     // }
 
-    docker.image('trion/ng-cli-karma').inside {
+    // docker.image('trion/ng-cli-karma').inside {
+    docker.image('claracyril/node-chromium:14-alpine').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
             sh 'node --version'
