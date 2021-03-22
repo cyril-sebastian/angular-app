@@ -53,6 +53,7 @@
 //     }
 // }
 
+
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
@@ -62,31 +63,7 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    // stage('Greeting') {
-    //     nodejs('nodejs-15.11.0') {
-    //         echo "Hello! how are you $BRANCH_NAME"
-    //         sh 'node --version'
-    //         sh 'npm --version'
-    //     }
-    // }
-
-    // stage('Build') {
-    //     nodejs('nodejs-15.11.0') {
-    //         sh 'npm install'
-    //         sh 'npm build'
-    //     }
-    // }
-
-    // stage('Test') {
-    //     nodejs('nodejs-15.11.0') {
-    //         sh 'npm test -- --no-watch --code-coverage'
-    //         // sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
-    //     }
-    // }
-
     docker.image('trion/ng-cli-karma').inside {
-
-    // docker.image('claracyril/node-chromium:14-alpine').inside {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
             sh 'node --version'
