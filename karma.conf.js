@@ -29,6 +29,7 @@ module.exports = function (config) {
       dir: require('path').join(__dirname, './coverage/angular-app'),
       subdir: '.',
       reporters: [
+        // { type: 'lcov' },
         { type: 'lcovonly' },
         { type: 'html' },
         { type: 'text-summary' }
