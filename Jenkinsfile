@@ -86,8 +86,8 @@ node('master') {
         def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
         withSonarQubeEnv('sonarqube-server') {
             nodejs('nodejs-15.11.0') {
-                sh "ls ${WORKSPACE}"
-                sh "cat ${WORKSPACE}/coverage/angular-app/lcov.info"
+                // sh "ls ${WORKSPACE}"
+                // sh "cat ${WORKSPACE}/coverage/angular-app/lcov.info"
                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.javascript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
             }
         }
