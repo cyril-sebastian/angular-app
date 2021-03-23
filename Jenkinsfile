@@ -96,14 +96,15 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "$BRANCH_NAME"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+            step([$class: 'MasterCoverageAction');
+            step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
     }
 
     stage('PR Coverage to Github') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_TARGET]])
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]])
         }
     }
 }
