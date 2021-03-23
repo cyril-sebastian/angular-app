@@ -1,0 +1,14 @@
+.f-uploader-hover-area {
+  border-left: 6px solid #ffa500;
+  background-color: #ffefd1;
+  padding: 12px;
+  width: 100%;
+  width: -webkit-fill-available;
+  display: inline-block;
+}
+.f-uploader-hover-area:hover {
+  background-color: gainsboro;
+}
+input:focus {
+  outline: none;
+}
