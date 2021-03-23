@@ -53,6 +53,8 @@
 //     }
 // }
 
+
+
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
@@ -74,22 +76,39 @@ node('master') {
             sh 'npm build'
         }
 
-        // stage('Test') {
-        //     sh 'npm test -- --no-watch --code-coverage'
-        // }
+        stage('Test') {
+            // sh 'npm test -- --no-watch --code-coverage'
+            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+        }
     }
 
     stage('SonarQube') {
         def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
         withSonarQubeEnv('sonarqube-server') {
             nodejs('nodejs-15.11.0') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app"
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.javascript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
             }
+        }
+    }
+
+    stage('Record Coverage') {
+        if(env.CHANGE_ID != null) {
+            currentBuild.result = 'SUCCESS';
+            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL]]);
+        }
+    }
+
+    stage('PR Coverage to Github') {
+        if(env.BRANCH_NAME == "main" && env.CHANGE_ID != null) {
+            currentBuild.result = 'SUCCESS';
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL]])
         }
     }
 }
 
 stage("Quality Gate"){
+
     // Just in case something goes wrong, pipeline will be killed after a timeout
     timeout(time: 2, unit: 'MINUTES') {
         def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv

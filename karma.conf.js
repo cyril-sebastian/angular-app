@@ -10,6 +10,7 @@ module.exports = function (config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
+			// require('karma-coverage-istanbul-reporter'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
@@ -28,16 +29,34 @@ module.exports = function (config) {
       dir: require('path').join(__dirname, './coverage/angular-app'),
       subdir: '.',
       reporters: [
+        { type: 'lcovonly' },
         { type: 'html' },
         { type: 'text-summary' }
       ]
     },
+		// coverageIstanbulReporter: {
+    //   dir: require('path').join(__dirname, './coverage/angular-app'),
+    //   subdir: '.',
+		// 	reports: ['html', 'lcovonly', 'text-summary'], /*  || 'lcov' */
+		// 	fixWebpackSourcePaths: true,
+		// },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    // browsers: ['Chrome'],
+    customLaunchers: {
+      ChromeHeadless: {
+        base: 'Chrome',
+        flags: [
+          '--no-sandbox',
+          '--disable-gpu',
+          '--headless',
+          '--remote-debugging-port=9222'
+        ]
+      }
+    },
     singleRun: false,
     restartOnFileChange: true
   });
