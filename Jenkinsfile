@@ -96,7 +96,7 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "$BRANCH_NAME"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.BRANCH_NAME]]);
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
     }
 
@@ -113,7 +113,7 @@ stage("Quality Gate"){
     // Just in case something goes wrong, pipeline will be killed after a timeout
     timeout(time: 2, unit: 'MINUTES') {
         def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
-        
+
         if (qg.status != 'OK') {
             error "Pipeline aborted due to quality gate failure: ${qg.status}"
         }else {
