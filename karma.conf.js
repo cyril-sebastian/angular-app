@@ -25,23 +25,30 @@ module.exports = function (config) {
     jasmineHtmlReporter: {
       suppressAll: true // removes the duplicated traces
     },
+    preprocessors: {
+      'src/**/*.js': ['coverage']
+    },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/angular-app'),
       subdir: '.',
       reporters: [
         // { type: 'lcov' },
+        { type: 'cobertura' },
         { type: 'lcovonly' },
         { type: 'html' },
-        { type: 'text-summary' }
-      ]
+        { type: 'text-summary' },
+      ],
+      verbose: true
     },
 		// coverageIstanbulReporter: {
     //   dir: require('path').join(__dirname, './coverage/angular-app'),
     //   subdir: '.',
-		// 	reports: ['html', 'lcovonly', 'text-summary'], /*  || 'lcov' */
+		// 	reports: ['html', 'lcovonly', 'text-summary', 'cobertura'], /*  || 'lcov' */
 		// 	fixWebpackSourcePaths: true,
+    //   verbose: true
 		// },
     reporters: ['progress', 'kjhtml', 'coverage'],
+    // reporters: ['progress', 'kjhtml', 'coverage-istanbul'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
