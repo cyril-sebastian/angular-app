@@ -94,8 +94,8 @@ node('master') {
     stage('Record Coverage') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
             echo "$CHANGE_TARGET"
+            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
             step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_TARGET]]);
         }
     }
