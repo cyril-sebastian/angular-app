@@ -94,7 +94,8 @@ node('master') {
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "$BRANCH_NAME $GIT_URL"
+            def url = env.GIT_URL;
+            echo "$BRANCH_NAME $url"
             step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
