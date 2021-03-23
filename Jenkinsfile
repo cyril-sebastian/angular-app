@@ -86,23 +86,24 @@ node('master') {
         def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
         withSonarQubeEnv('sonarqube-server') {
             nodejs('nodejs-15.11.0') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.javascript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.typescript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
             }
         }
     }
 
     stage('Record Coverage') {
-        if(env.CHANGE_ID != null) {
+        if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
+            echo "$BRANCH_NAME"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL]]);
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.BRANCH_NAME]]);
         }
     }
 
     stage('PR Coverage to Github') {
-        if(env.BRANCH_NAME == "main" && env.CHANGE_ID != null) {
+        if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL]])
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_TARGET]])
         }
     }
 }

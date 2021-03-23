@@ -11,6 +11,7 @@ module.exports = function (config) {
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
 			// require('karma-coverage-istanbul-reporter'),
+      // require('karma-typescript'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
@@ -25,22 +26,44 @@ module.exports = function (config) {
     jasmineHtmlReporter: {
       suppressAll: true // removes the duplicated traces
     },
+    // karmaTypescriptConfig: {
+    //   // include: {
+    //   //   mode: "merge|replace",
+    //   //   values: ["src/**/*.ts"]
+    //   // },
+    //   coverageOptions: {
+    //     exclude: /(\.(d|spec|test)\.ts|\.js)/i,
+    //   },
+    //   reports:
+    //   {
+    //       "cobertura": "coverage",
+    //       "lcovonly": "coverage",
+    //       "html": "coverage",
+    //       "text-summary": ""
+    //   }
+    // },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/angular-app'),
       subdir: '.',
       reporters: [
+        // { type: 'lcov' },
+        { type: 'cobertura' },
         { type: 'lcovonly' },
         { type: 'html' },
-        { type: 'text-summary' }
-      ]
+        { type: 'text-summary' },
+      ],
+      verbose: true
     },
 		// coverageIstanbulReporter: {
     //   dir: require('path').join(__dirname, './coverage/angular-app'),
     //   subdir: '.',
-		// 	reports: ['html', 'lcovonly', 'text-summary'], /*  || 'lcov' */
+		// 	reports: ['html', 'lcovonly', 'text-summary', 'cobertura'], /*  || 'lcov' */
 		// 	fixWebpackSourcePaths: true,
+    //   verbose: true
 		// },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'coverage'],
+    // reporters: ['progress', 'kjhtml', 'karma-typescript'],
+    // reporters: ['progress', 'kjhtml', 'coverage-istanbul'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
