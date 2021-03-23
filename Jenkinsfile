@@ -35,10 +35,6 @@ node('master') {
         }
     }
 
-    def fullBranchUrl(branchName) {
-        return "$GIT_URL/tree/$branchName"
-    }
-
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
@@ -59,17 +55,19 @@ node('master') {
 }
 
 stage("Quality Gate"){
-
     // Just in case something goes wrong, pipeline will be killed after a timeout
     timeout(time: 2, unit: 'MINUTES') {
         def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
-
         if (qg.status != 'OK') {
             echo "Pipeline aborted due to quality gate failure: ${qg.status}"
-        }else {
+        } else {
             echo "status is ${qg.status}"
         }
     }
+}
+
+def fullBranchUrl(branchName) {
+    return "$GIT_URL/tree/$branchName"
 }
 
 
