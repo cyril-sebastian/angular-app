@@ -94,16 +94,16 @@ node('master') {
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || enc.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "$CHANGE_TARGET"
+            echo "$BRANCH_NAME"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_TARGET]]);
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.BRANCH_NAME]]);
         }
     }
 
     stage('PR Coverage to Github') {
-        if(env.BRANCH_NAME == "main" && env.CHANGE_ID != null) {
+        if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL]])
+            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_TARGET]])
         }
     }
 }
