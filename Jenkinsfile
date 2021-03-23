@@ -95,8 +95,8 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            echo "$BRANCH_NAME"
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.BRANCH_NAME]]);
+            echo "$CHANGE_BRANCH"
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, BRANCH_NAME: env.CHANGE_BRANCH]]);
         }
     }
 
