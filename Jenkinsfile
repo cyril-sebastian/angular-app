@@ -67,7 +67,8 @@ stage("Quality Gate"){
 }
 
 def fullBranchUrl(branchName) {
-    return "${env.GIT_URL.split('.')[0]}/tree/$branchName"
+    def gitUrl = env.GIT_URL.split(".")[0];
+    return "$gitUrl/tree/$branchName"
 }
 
 
