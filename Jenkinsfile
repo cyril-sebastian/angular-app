@@ -54,7 +54,6 @@
 // }
 
 
-
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
@@ -64,7 +63,7 @@ node('master') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
         env.GIT_BRANCH = scmVars.GIT_BRANCH;
-        echo "$WORKSPACE $scmVars.GIT_URL"
+        echo "$WORKSPACE"
     }
 
     docker.image('trion/ng-cli-karma').inside {
@@ -80,7 +79,6 @@ node('master') {
         }
 
         stage('Test') {
-            // sh 'npm test -- --no-watch --code-coverage'
             sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
         }
     }
@@ -98,7 +96,6 @@ node('master') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
             echo "$GIT_URL $GIT_BRANCH"
-            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
             step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.GIT_BRANCH]]);
         }
     }
