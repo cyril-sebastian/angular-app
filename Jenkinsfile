@@ -78,7 +78,6 @@ node('master') {
 
         stage('Test') {
             // sh 'npm test -- --no-watch --code-coverage'
-            
             sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
         }
     }
