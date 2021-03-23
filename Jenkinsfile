@@ -67,7 +67,7 @@ stage("Quality Gate"){
 }
 
 def fullBranchUrl(branchName) {
-    return "${scm.getUserRemoteConfigs()[0].getUrl()}/tree/$branchName"
+    return "${scm.getUserRemoteConfigs().split('.')[0].getUrl()}/tree/$branchName"
 }
 
 
