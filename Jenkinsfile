@@ -96,7 +96,6 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "$BRANCH_NAME"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            step([$class: 'MasterCoverageAction');
             step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
     }
