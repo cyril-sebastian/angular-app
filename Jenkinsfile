@@ -1,3 +1,78 @@
+// Multibranch Pipeline
+node('master') {
+    skipDefaultCheckout()
+    
+
+    stage('Checkout') {
+        final scmVars = checkout scm
+        env.GIT_URL = scmVars.GIT_URL;
+        echo "$WORKSPACE"
+    }
+
+    docker.image('trion/ng-cli-karma').inside {
+        stage('Greeting') {
+            echo "Hello! how are you $BRANCH_NAME"
+            sh 'node --version'
+            sh 'npm --version'
+        }
+
+        stage('Build') {
+            sh 'npm install'
+            sh 'npm build'
+        }
+
+        stage('Test') {
+            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+        }
+    }
+
+    stage('SonarQube') {
+        def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+        withSonarQubeEnv('sonarqube-server') {
+            nodejs('nodejs-15.11.0') {
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.typescript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
+            }
+        }
+    }
+
+    def fullBranchUrl(branchName) {
+        return "$GIT_URL/tree/$branchName"
+    }
+
+    stage('Record Coverage') {
+        if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
+            currentBuild.result = 'SUCCESS';
+            echo "${fullBranchUrl(env.BRANCH_NAME)}"
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.BRANCH_NAME)]]);
+            // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+        }
+    }
+
+    stage('PR Coverage to Github') {
+        if(env.CHANGE_ID != null) {
+            currentBuild.result = 'SUCCESS';
+            echo "${fullBranchUrl(env.CHANGE_TARGET)}"
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
+        }
+    }
+}
+
+stage("Quality Gate"){
+
+    // Just in case something goes wrong, pipeline will be killed after a timeout
+    timeout(time: 2, unit: 'MINUTES') {
+        def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
+
+        if (qg.status != 'OK') {
+            echo "Pipeline aborted due to quality gate failure: ${qg.status}"
+        }else {
+            echo "status is ${qg.status}"
+        }
+    }
+}
+
+
 // // Pipeline
 // node('master') {
 //     skipDefaultCheckout()
@@ -52,72 +127,3 @@
 //         echo "$ACTION"
 //     }
 // }
-
-
-// Multibranch Pipeline
-node('master') {
-    skipDefaultCheckout()
-    
-
-    stage('Checkout') {
-        final scmVars = checkout scm
-        env.GIT_URL = scmVars.GIT_URL;
-        env.GIT_BRANCH = scmVars.GIT_BRANCH;
-        echo "$WORKSPACE"
-    }
-
-    docker.image('trion/ng-cli-karma').inside {
-        stage('Greeting') {
-            echo "Hello! how are you $BRANCH_NAME"
-            sh 'node --version'
-            sh 'npm --version'
-        }
-
-        stage('Build') {
-            sh 'npm install'
-            sh 'npm build'
-        }
-
-        stage('Test') {
-            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
-        }
-    }
-
-    stage('SonarQube') {
-        def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
-        withSonarQubeEnv('sonarqube-server') {
-            nodejs('nodejs-15.11.0') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.typescript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
-            }
-        }
-    }
-
-    stage('Record Coverage') {
-        if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
-            currentBuild.result = 'SUCCESS';
-            echo "$GIT_URL $GIT_BRANCH"
-            step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.GIT_BRANCH]]);
-        }
-    }
-
-    stage('PR Coverage to Github') {
-        if(env.CHANGE_ID != null) {
-            currentBuild.result = 'SUCCESS';
-            step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]])
-        }
-    }
-}
-
-stage("Quality Gate"){
-
-    // Just in case something goes wrong, pipeline will be killed after a timeout
-    timeout(time: 2, unit: 'MINUTES') {
-        def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
-
-        if (qg.status != 'OK') {
-            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-        }else {
-            echo "status is ${qg.status}"
-        }
-    }
-}
