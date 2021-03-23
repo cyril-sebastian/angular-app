@@ -58,10 +58,12 @@
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
-    final scmVars;
+    
 
     stage('Checkout') {
-        scmVars = checkout scm
+        final scmVars = checkout scm
+        env.GIT_URL = scmVars.GIT_URL;
+        env.GIT_BRANCH = scmVars.GIT_BRANCH;
         echo "$WORKSPACE $scmVars.GIT_URL"
     }
 
@@ -95,9 +97,9 @@ node('master') {
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "$BRANCH_NAME $scmVars.GIT_URL"
-            step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
-            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+            echo "$GIT_URL $GIT_BRANCH"
+            // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
+            step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.GIT_BRANCH]]);
         }
     }
 
