@@ -88,7 +88,7 @@ node('master') {
             nodejs('nodejs-15.11.0') {
                 sh "ls ${WORKSPACE}"
                 sh "cat ${WORKSPACE}/coverage/angular-app/lcov.info"
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.javascript.lcov.reportPaths=${WORKSPACE}/angular-app/coverage/angular-app/lcov.info"
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.javascript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
             }
         }
     }
