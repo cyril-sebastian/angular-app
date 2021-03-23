@@ -92,7 +92,7 @@ node('master') {
     }
 
     stage('Record Coverage') {
-        if(env.CHANGE_ID != null) {
+        if(env.BRANCH_NAME == "main" || enc.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
             echo "$CHANGE_TARGET"
             // step([$class: 'MasterCoverageAction', scmVars: [GIT_URL: env.GIT_URL]]);
