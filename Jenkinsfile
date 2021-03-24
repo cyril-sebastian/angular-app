@@ -22,7 +22,7 @@ node('master') {
         }
 
         stage('Test') {
-            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+            sh 'npm test -- -ci --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
         }
     }
 
