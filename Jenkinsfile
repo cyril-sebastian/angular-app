@@ -12,9 +12,7 @@ node('master') {
         echo "$WORKSPACE"
     }
 
-    docker.image('trion/ng-cli-karma').inside([
-        "-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN"
-        ]) {
+    docker.image('trion/ng-cli-karma').inside("-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN") {
         stage('Greeting') {
             echo "Hello! how are you $BRANCH_NAME"
             sh 'node --version'
