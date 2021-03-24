@@ -1,59 +1,3 @@
-// // Pipeline
-// node('master') {
-//     skipDefaultCheckout()
-
-//     withEnv([
-//         'name=cyril'
-//     ]) {
-
-//         docker.image('node:14-alpine').inside {
-//             def repo
-//             stage('Checkout') {
-//                 repo = checkout([
-//                     $class: 'GitSCM', 
-//                     branches: [[name: params.branch]], 
-//                     extensions: [], 
-//                     userRemoteConfigs: [[credentialsId: 'github-cyril-sebastian', url: 'https://github.com/cyril-sebastian/angular-app.git']]
-//                 ])
-//             }
-
-//             stage('Greeting') {
-//                 echo "Hello! how are you"
-//             }
-
-//             stage('Build') {
-//                 sh 'node --version'
-//                 sh 'npm --version'
-//                 sh 'npm install'
-//             }
-
-//             // stage('Test') {
-//             //     sh 'npm test -- --no-watch --code-coverage'
-//             // }
-//         }
-//     }
-// }
-// // Kill Agent
-
-// // Input Step
-// timeout(time: 15, unit: "MINUTES") {
-//     stage('Input example') {
-//         input(
-//             id: 'Action',
-//             message: 'Should we continue?', 
-//             ok: 'yes', 
-//             parameters: [
-//                 choice(choices: ['proceed', 'abort', 'wait', 'notify'], description: '', name: 'ACTION'), 
-//                 string(defaultValue: 'alice', description: '', name: 'PERSON', trim: false)
-//             ],
-//             submitter: 'alice,bob'
-//         )
-//         echo "Hello, $PERSON, nice to meet you."
-//         echo "$ACTION"
-//     }
-// }
-
-
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
@@ -62,7 +6,6 @@ node('master') {
     stage('Checkout') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
-        env.GIT_BRANCH = scmVars.GIT_BRANCH;
         echo "$WORKSPACE"
     }
 
@@ -95,29 +38,35 @@ node('master') {
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.GIT_BRANCH]]);
+            echo "${fullBranchUrl(env.BRANCH_NAME)}"
+            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.BRANCH_NAME)]]);
+            // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
     }
 
     stage('PR Coverage to Github') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]])
-            // step([$class: 'CompareCoverageAction', publishResultAs: 'statusCheck', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]])
+            echo "${fullBranchUrl(env.CHANGE_TARGET)}"
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
         }
     }
 }
 
 stage("Quality Gate"){
-
     // Just in case something goes wrong, pipeline will be killed after a timeout
     timeout(time: 2, unit: 'MINUTES') {
         def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
-
         if (qg.status != 'OK') {
-            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-        }else {
+            echo "Pipeline aborted due to quality gate failure: ${qg.status}"
+        } else {
             echo "status is ${qg.status}"
         }
     }
+}
+
+def fullBranchUrl(branchName) {
+    def gitUrl = env.GIT_URL.split(/\.git/)[0];
+    return "$gitUrl/tree/$branchName"
 }
