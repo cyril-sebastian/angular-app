@@ -34,7 +34,6 @@ node('master') {
             sh "npm run danger ci"
         }
     }
-
     // stage('Danger CI') {
     //     withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
     //         env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
