@@ -6,7 +6,7 @@ node('master') {
     stage('Checkout') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
-        echo "${scmVars.GIT_URL_PROPERTY} ${scmVars.GIT_URL}"
+        echo "${scmVars.GIT_URL_PROPERTY} ${scmVars.GIT_URL} ${scmVars.GIT_COMMIT}"
         withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
         }
