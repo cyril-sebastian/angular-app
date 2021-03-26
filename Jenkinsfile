@@ -6,39 +6,36 @@ node('master') {
     stage('Checkout') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
+        echo "${scmVars.GIT_URL_PROPERTY}"
         withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
         }
         echo "$WORKSPACE"
     }
 
-    docker.image('trion/ng-cli-karma').inside("-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN") {
-        stage('Greeting') {
-            echo "Hello! how are you $BRANCH_NAME"
-            sh 'node --version'
-            sh 'npm --version'
-        }
+    // lock(label: 'master', variable: 'LOCKED_RESOURCE') {
+        // echo "$LOCKED_RESOURCE"
 
-        stage('Build') {
-            sh 'npm install'
-            sh 'npm build'
-        }
+        docker.image('trion/ng-cli-karma').inside("-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN") {
+            stage('Greeting') {
+                echo "Hello! how are you $BRANCH_NAME"
+                sh 'node --version'
+                sh 'npm --version'
+            }
 
-        stage('Test') {
-            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
-        }
+            stage('Build') {
+                sh 'npm install'
+                sh 'npm build'
+            }
 
-        stage('Danger CI') {
-            sh "npm run danger ci"
+            stage('Test') {
+                sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+            }
+
+            stage('Danger CI') {
+                sh "npm run danger ci"
+            }
         }
-    }
-    // stage('Danger CI') {
-    //     withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
-    //         env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
-    //         nodejs('nodejs-15.11.0') {
-    //             sh "npm run danger ci"
-    //         }
-    //     }
     // }
 
     stage('SonarQube') {
