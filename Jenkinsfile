@@ -7,8 +7,6 @@ node('master') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
         echo "${scmVars.GIT_URL} ${scmVars.GIT_COMMIT}"
-        println(scmVars.gitChangelog());
-        printChangeSets();
         withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
         }
@@ -77,30 +75,6 @@ stage("Quality Gate"){
             echo "status is ${qg.status}"
         }
     }
-}
-
-def printChangeSets() {
-    def changeLogSets = currentBuild.changeSets
-    if(changeLogSets.size()>0) {
-        def entries = changeLogSets[changeLogSets.size()-1].items;
-        if(entries.length>0) {
-            def entry = entries[entries.length-1];
-            echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-        }
-    }
-
-    // for (int i = 0; i < changeLogSets.size(); i++) {
-    //     def entries = changeLogSets[i].items
-    //     for (int j = 0; j < entries.length; j++) {
-    //         def entry = entries[j]
-    //         echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
-    //         def files = new ArrayList(entry.affectedFiles)
-    //         for (int k = 0; k < files.size(); k++) {
-    //             def file = files[k]
-    //             echo "  ${file.editType.name} ${file.path}"
-    //         }
-    //     }
-    // }
 }
 
 def fullBranchUrl(branchName) {
