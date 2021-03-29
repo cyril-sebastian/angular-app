@@ -7,6 +7,7 @@ node('master') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
         echo "${scmVars.GIT_URL} ${scmVars.GIT_COMMIT}"
+        println(scmVars.gitChangelog());
         printChangeSets();
         withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
@@ -61,7 +62,7 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
             // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
         }
     }
