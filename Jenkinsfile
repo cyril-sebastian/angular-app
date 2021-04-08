@@ -6,7 +6,7 @@ node('master') {
     stage('Checkout') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
-        withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
+        withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
         }
         echo "$WORKSPACE"
@@ -32,6 +32,7 @@ node('master') {
             sh "npm run danger ci"
         }
     }
+
     // stage('Danger CI') {
     //     withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
     //         env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
