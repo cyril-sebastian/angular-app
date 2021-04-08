@@ -56,7 +56,7 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
             // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
         }
     }
