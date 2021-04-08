@@ -6,37 +6,33 @@ node('master') {
     stage('Checkout') {
         final scmVars = checkout scm
         env.GIT_URL = scmVars.GIT_URL;
-        echo "${scmVars.GIT_URL} ${scmVars.GIT_COMMIT}"
-        withCredentials([usernamePassword(credentialsId: 'github-cyril-sebastian-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
+        withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
         }
         echo "$WORKSPACE"
     }
 
-    // lock(label: 'master', variable: 'LOCKED_RESOURCE') {
-        // echo "$LOCKED_RESOURCE"
 
-        docker.image('trion/ng-cli-karma').inside("-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN") {
-            stage('Greeting') {
-                echo "Hello! how are you $BRANCH_NAME"
-                sh 'node --version'
-                sh 'npm --version'
-            }
-
-            stage('Build') {
-                sh 'npm install'
-                sh 'npm build'
-            }
-
-            stage('Test') {
-                sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
-            }
-
-            stage('Danger CI') {
-                sh "npm run danger ci"
-            }
+    docker.image('trion/ng-cli-karma').inside("-e DANGER_GITHUB_API_TOKEN=$DANGER_GITHUB_API_TOKEN") {
+        stage('Greeting') {
+            echo "Hello! how are you $BRANCH_NAME"
+            sh 'node --version'
+            sh 'npm --version'
         }
-    // }
+
+        stage('Build') {
+            sh 'npm install'
+            sh 'npm build'
+        }
+
+        stage('Test') {
+            sh 'npm test -- --no-watch --code-coverage --no-progress --browsers=ChromeHeadless'
+        }
+
+        stage('Danger CI') {
+            sh "npm run danger ci"
+        }
+    }
 
     stage('SonarQube') {
         def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
@@ -68,7 +64,7 @@ node('master') {
 
 stage("Quality Gate"){
     timeout(time: 2, unit: 'MINUTES') {
-        def qg = waitForQualityGate(); // Reuse taskId previously collected by withSonarQubeEnv
+        def qg = waitForQualityGate();
         if (qg.status != 'OK') {
             echo "Pipeline aborted due to quality gate failure: ${qg.status}"
         } else {
