@@ -22,7 +22,7 @@ schedule(istanbulCoverage({
   customFailureMessage: "Coverage is a little low, take a look",
 
   // How to sort the entries in the table
-  entrySortMethod: "alphabetically" as SortMethod, // || "least-coverage" || "most-coverage" || "largest-file-size" ||"smallest-file-size" || "uncovered-lines"
+  entrySortMethod: "least-coverage" as SortMethod, // || "least-coverage" || "most-coverage" || "largest-file-size" ||"smallest-file-size" || "uncovered-lines" || "alphabetically" 
 
   // Add a maximum number of entries to display
   numberOfEntries: 10,
@@ -35,7 +35,7 @@ schedule(istanbulCoverage({
   coveragePath: { path: "./coverage/angular-app/lcov.info", type: "lcov" /* ||  "json-summary" */},
 
   // Which set of files to summarise from the coverage file.
-  reportFileSet: "all", // || "modified" || "created" || "createdOrModified"
+  reportFileSet: "createdOrModified", // || "modified" || "created" || "createdOrModified" || "all"
 
   // What to do when the PR doesn't meet the minimum code coverage threshold
   reportMode: "warn", // || "warn" || "fail" || "message"
