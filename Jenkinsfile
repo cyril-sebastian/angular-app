@@ -34,14 +34,14 @@ node('master') {
         }
     }
 
-    stage('SonarQube') {
-        def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
-        withSonarQubeEnv('sonarqube-server') {
-            nodejs('nodejs-15.11.0') {
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.typescript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
-            }
-        }
-    }
+    // stage('SonarQube') {
+    //     def scannerHome = tool(name: 'sonarqube-scanner-4.6.0.2311', type: 'hudson.plugins.sonar.SonarRunnerInstallation');
+    //     withSonarQubeEnv('sonarqube-server') {
+    //         nodejs('nodejs-15.11.0') {
+    //             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=angular-app -Dsonar.projectName=angular-app -Dsonar.typescript.lcov.reportPaths=${WORKSPACE}/coverage/angular-app/lcov.info"
+    //         }
+    //     }
+    // }
 
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
@@ -62,16 +62,16 @@ node('master') {
     }
 }
 
-stage("Quality Gate"){
-    timeout(time: 2, unit: 'MINUTES') {
-        def qg = waitForQualityGate();
-        if (qg.status != 'OK') {
-            echo "Pipeline aborted due to quality gate failure: ${qg.status}"
-        } else {
-            echo "status is ${qg.status}"
-        }
-    }
-}
+// stage("Quality Gate"){
+//     timeout(time: 2, unit: 'MINUTES') {
+//         def qg = waitForQualityGate();
+//         if (qg.status != 'OK') {
+//             echo "Pipeline aborted due to quality gate failure: ${qg.status}"
+//         } else {
+//             echo "status is ${qg.status}"
+//         }
+//     }
+// }
 
 def fullBranchUrl(branchName) {
     def gitUrl = env.GIT_URL.split(/\.git/)[0];
