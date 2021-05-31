@@ -60,7 +60,7 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             echo "${scmVars}"
-            List<ReportMetaData> reportMetaDataList = new ArrayaList<>();
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
             reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
