@@ -50,9 +50,13 @@ node('master') {
     stage('Record Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.BRANCH_NAME)}"
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.BRANCH_NAME)]]);
-            // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+            echo "${scmVars}"
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
+            step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
+            ]);
         }
     }
 
