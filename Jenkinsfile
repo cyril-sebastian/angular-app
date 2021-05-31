@@ -1,4 +1,3 @@
-def scmVars;
 import com.github.terma.jenkins.githubprcoveragestatus.*;
 import java.util.List;
 
