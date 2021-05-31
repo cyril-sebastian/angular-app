@@ -1,5 +1,5 @@
 import com.github.terma.jenkins.githubprcoveragestatus.*;
-import java.util.List;
+import java.util.*;
 
 def scmVars;
 // Multibranch Pipeline
@@ -59,13 +59,12 @@ node('master') {
     stage('PR Coverage to Github') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            // scmVars.BRANCH_NAME = env.BRANCH_NAME;
             echo "${scmVars}"
-            echo "${env.BRANCH_NAME} ${env.GIT_BRANCH}"
-            // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            List<ReportMetaData> reportMetaDataList = new ArrayaList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
-                scmVars: scmVars
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
             ]);
         }
     }
