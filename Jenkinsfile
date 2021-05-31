@@ -69,7 +69,7 @@ node('master') {
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
                 reportMetaDataList: [
-                    [$class: 'ReportMetaData', label: 'frontend', includes: 'angular-app']
+                    [$class: 'ReportMetaData', label: 'frontend', includes: 'angular-app', excludes: null]
                 ]
             ]);
         }
