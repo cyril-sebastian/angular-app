@@ -1,5 +1,5 @@
 import com.github.terma.jenkins.githubprcoveragestatus.*;
-import java.util.List;
+import java.util.*;
 
 def scmVars;
 // Multibranch Pipeline
@@ -47,24 +47,28 @@ node('master') {
     //     }
     // }
 
-    stage('Record Coverage') {
+    stage('Record Branch Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.BRANCH_NAME)}"
-            step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', scmVars: scmVars]);
-            // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+            echo "${scmVars}"
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
+            step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
+            ]);
         }
     }
 
     stage('PR Coverage to Github') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            // scmVars.BRANCH_NAME = env.BRANCH_NAME;
             echo "${scmVars}"
-            echo "${env.BRANCH_NAME} ${env.GIT_BRANCH}"
-            // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
-            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', scmVars: scmVars
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'statusCheck', 
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
             ]);
         }
     }
