@@ -65,7 +65,8 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "${scmVars}"
             List<ReportMetaData> reportMetaDataList = new ArrayList<>();
-            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication|coverage'));
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
+            reportMetaDataList.add(new ReportMetaData("backend", "coverage", 'BrooklynApiServices'));
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
                 reportMetaDataList: reportMetaDataList
