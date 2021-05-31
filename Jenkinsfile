@@ -62,6 +62,7 @@ node('master') {
             echo "${fullBranchUrl(env.CHANGE_TARGET)}"
             // scmVars.BRANCH_NAME = env.BRANCH_NAME;
             echo "${scmVars}"
+            echo "${env}"
             // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars
