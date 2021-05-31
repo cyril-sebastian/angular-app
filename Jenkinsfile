@@ -51,7 +51,7 @@ node('master') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
             echo "${fullBranchUrl(env.BRANCH_NAME)}"
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.BRANCH_NAME)]]);
+            step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', scmVars: scmVars]);
             // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
         }
     }
@@ -64,8 +64,7 @@ node('master') {
             echo "${scmVars}"
             echo "${env.BRANCH_NAME} ${env.GIT_BRANCH}"
             // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
-            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
-                scmVars: scmVars
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', scmVars: scmVars
             ]);
         }
     }
