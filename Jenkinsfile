@@ -66,7 +66,7 @@ node('master') {
             echo "${scmVars}"
             List<ReportMetaData> reportMetaDataList = new ArrayList<>();
             reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
-            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'statusCheck', 
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
                 reportMetaDataList: reportMetaDataList
             ]);
