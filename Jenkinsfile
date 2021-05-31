@@ -52,7 +52,7 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "${scmVars}"
             List<ReportMetaData> reportMetaDataList = new ArrayList<>();
-            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
             step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
                 reportMetaDataList: reportMetaDataList
@@ -65,7 +65,7 @@ node('master') {
             currentBuild.result = 'SUCCESS';
             echo "${scmVars}"
             List<ReportMetaData> reportMetaDataList = new ArrayList<>();
-            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", null));
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'statusCheck', 
                 scmVars: scmVars,
                 reportMetaDataList: reportMetaDataList
