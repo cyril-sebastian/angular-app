@@ -67,6 +67,7 @@ node('master') {
             List<ReportMetaData> reportMetaDataList = new ArrayList<>();
             reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
             reportMetaDataList.add(new ReportMetaData("backend", "coverage", 'BrooklynApiServices'));
+            reportMetaDataList.add(new ReportMetaData("backend"));
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars,
                 reportMetaDataList: reportMetaDataList
