@@ -60,6 +60,8 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             echo "${fullBranchUrl(env.CHANGE_TARGET)}"
+            scmVars.BRANCH_NAME = env.BRANCH_NAME;
+            echo "${scmVars}"
             // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
             step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
                 scmVars: scmVars
