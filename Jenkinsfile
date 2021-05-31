@@ -1,9 +1,5 @@
 import com.github.terma.jenkins.githubprcoveragestatus.*;
-<<<<<<< HEAD
 import java.util.*;
-=======
-import java.util.List;
->>>>>>> 52476c02564a1a0c7c0e2fde75a2cce61305d59e
 
 def scmVars;
 // Multibranch Pipeline
