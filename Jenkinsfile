@@ -1,10 +1,14 @@
+import com.github.terma.jenkins.githubprcoveragestatus.*;
+import java.util.List;
+
+def scmVars;
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
-    
 
     stage('Checkout') {
-        final scmVars = checkout scm
+        scmVars = checkout scm
+        echo "$scmVars";
         env.GIT_URL = scmVars.GIT_URL;
         withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
@@ -56,8 +60,13 @@ node('master') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
             echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
-            // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
+            // scmVars.BRANCH_NAME = env.BRANCH_NAME;
+            echo "${scmVars}"
+            echo "${env.BRANCH_NAME} ${env.GIT_BRANCH}"
+            // step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
+                scmVars: scmVars
+            ]);
         }
     }
 }
