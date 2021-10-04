@@ -1,10 +1,14 @@
+import com.github.terma.jenkins.githubprcoveragestatus.*;
+import java.util.*;
+
+def scmVars;
 // Multibranch Pipeline
 node('master') {
     skipDefaultCheckout()
-    
 
     stage('Checkout') {
-        final scmVars = checkout scm
+        scmVars = checkout scm
+        echo "$scmVars";
         env.GIT_URL = scmVars.GIT_URL;
         withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GITHUB_PWD', usernameVariable: 'GITHUB_USR')]) {
             env.DANGER_GITHUB_API_TOKEN=env.GITHUB_PWD;
@@ -43,21 +47,29 @@ node('master') {
     //     }
     // }
 
-    stage('Record Coverage') {
+    stage('Record Branch Coverage') {
         if(env.BRANCH_NAME == "main" || env.BRANCH_NAME == "develop") {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.BRANCH_NAME)}"
-            step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.BRANCH_NAME)]]);
-            // step([$class: 'MasterCoverageAction', jacocoCounterType: 'INSTRUCTION', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.BRANCH_NAME]]);
+            echo "${scmVars}"
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
+            step([$class: 'BranchCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
+            ]);
         }
     }
 
     stage('PR Coverage to Github') {
         if(env.CHANGE_ID != null) {
             currentBuild.result = 'SUCCESS';
-            echo "${fullBranchUrl(env.CHANGE_TARGET)}"
-            step([$class: 'CompareCoverageAction', publishResultAs: 'comment', jacocoCoverageCounter: 'INSTRUCTION', scmVars: [GIT_URL: fullBranchUrl(env.CHANGE_TARGET)]]);
-            // step([$class: 'CompareCoverageAction', jacocoCounterType: 'INSTRUCTION', publishResultAs: 'comment', scmVars: [GIT_URL: env.GIT_URL, GIT_BRANCH: env.CHANGE_TARGET]]);
+            echo "${scmVars}"
+            List<ReportMetaData> reportMetaDataList = new ArrayList<>();
+            reportMetaDataList.add(new ReportMetaData("frontend", "angular-app", 'authentication'));
+            step([$class: 'CompareCoverageAction', jacocoCounterType: 'LINE', publishResultAs: 'comment', 
+                scmVars: scmVars,
+                reportMetaDataList: reportMetaDataList
+            ]);
         }
     }
 }
