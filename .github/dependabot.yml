@@ -30,14 +30,14 @@ updates:
   #     include: scope
 
   - package-ecosystem: npm
-    directory: ./
+    directory: /
+    target-branch: feature/CB-14817-dependabot
+    open-pull-requests-limit: 1
     schedule:
       interval: weekly
       day: monday
       time: "13:05"
       timezone: America/New_York
-    target-branch: feature/CB-14817-dependabot
-    open-pull-requests-limit: 1
     commit-message:
       prefix: npm prod
       prefix-development: npm dev
